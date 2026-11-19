@@ -1,0 +1,32 @@
+name: Échantillons de voix
+
+# Lancement manuel (onglet Actions → « Échantillons de voix » → Run workflow).
+# Les extraits sont attachés à la Release « echantillons », écoutables sur iPhone.
+on:
+  workflow_dispatch:
+    inputs:
+      rate:
+        description: "Vitesse (ex. +0%, +10%, -5%)"
+        default: "+0%"
+
+permissions:
+  contents: write
+
+jobs:
+  samples:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python samples.py --rate "${{ inputs.rate }}"
+      - name: Publier dans la Release « echantillons »
+        run: |
+          gh release view echantillons >/dev/null 2>&1 || \
+            gh release create echantillons --title "Échantillons de voix" \
+              --notes "Même extrait lu par chaque voix, pour choisir à l'oreille." --prerelease
+          gh release upload echantillons samples/*.mp3 --clobber

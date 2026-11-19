@@ -1,0 +1,63 @@
+name: Publier les épisodes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "episodes/**"
+      - "podcast.yaml"
+      - "cover.jpg"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Régénérer tous les MP3"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # créer les Releases
+  pages: write
+  id-token: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer ffmpeg et les dépendances
+        run: |
+          which ffmpeg || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg)
+          pip install -r requirements.txt
+
+      - name: Générer les MP3 et les Releases
+        run: python publish.py ${{ inputs.force && '--force' || '' }}
+
+      - name: Régénérer le flux RSS
+        run: python feed.py
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

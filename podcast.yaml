@@ -1,0 +1,9 @@
+# Métadonnées du flux RSS.
+title: "Culture générale"
+author: "Podcasts Culture"
+description: "Épisodes de culture générale générés à partir de scripts, à deux voix : Camille et Thomas."
+language: fr
+category: Education
+cover: cover.jpg
+# Ne pas apparaître dans l'annuaire Apple Podcasts (le flux reste lisible par URL).
+block: true

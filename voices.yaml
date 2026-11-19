@@ -1,0 +1,26 @@
+# Réglages de synthèse vocale.
+
+# Moteur utilisé : edge (Microsoft Edge, en ligne) ou piper (local, voir README).
+engine: edge
+
+# Vitesse globale, au format edge-tts : "+0%" = normal, "+10%" = plus rapide,
+# "-10%" = plus lent. Chaque voix peut la surcharger avec sa propre clé rate.
+rate: "+0%"
+
+# Pauses en millisecondes.
+pauses:
+  replique: 350      # entre deux répliques
+  chapitre: 1300     # avant chaque nouveau chapitre
+
+# Volume cible (LUFS intégrés). -16 est la norme courante des podcasts.
+loudness: -16
+
+voices:
+  CAMILLE:
+    edge: fr-FR-VivienneMultilingualNeural
+    piper: fr_FR-siwis-medium
+    # rate: "+5%"
+  THOMAS:
+    edge: fr-FR-RemyMultilingualNeural
+    piper: fr_FR-tom-medium
+    # rate: "+0%"
