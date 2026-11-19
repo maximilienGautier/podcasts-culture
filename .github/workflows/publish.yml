@@ -36,10 +36,12 @@ jobs:
           python-version: "3.12"
           cache: pip
 
-      - name: Installer ffmpeg et les dépendances
-        run: |
-          which ffmpeg || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg)
-          pip install -r requirements.txt
+      - uses: FedericoCarboni/setup-ffmpeg@v3
+        with:
+          github-token: ${{ github.token }}
+
+      - name: Installer les dépendances Python
+        run: pip install -r requirements.txt
 
       - name: Générer les MP3 et les Releases
         run: python publish.py ${{ inputs.force && '--force' || '' }}
